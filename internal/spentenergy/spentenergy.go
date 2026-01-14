@@ -1,6 +1,7 @@
 package spentenergy
 
 import (
+	"errors"
 	"time"
 )
 
@@ -12,18 +13,58 @@ const (
 	walkingCaloriesCoefficient = 0.5  // коэффициент для расчета калорий при ходьбе.
 )
 
+// WalkingSpentCalories рассчитывает количество потраченных каллорий при ходьбе.
+// Принимает данные количество, вес пользователя в кг, рост в м, длительностью активности.
+// Возвращает количество сожженных калорий и ошибку, если она возникает.
 func WalkingSpentCalories(steps int, weight, height float64, duration time.Duration) (float64, error) {
-	// TODO: реализовать функцию
+	if weight <= 0 {
+		return 0, errors.New("invalid weight value")
+	}
+	if height <= 0 {
+		return 0, errors.New("invalid height value")
+	}
+	if steps <= 0 {
+		return 0, errors.New("invalid step count")
+	}
+	if duration <= 0 {
+		return 0, errors.New("invalid duration")
+	}
+	return (weight * MeanSpeed(steps, height, duration) * duration.Minutes()) / minInH * walkingCaloriesCoefficient, nil
 }
 
+// RunningSpentCalories рассчитывает количество потраченных каллорий при беге.
+// Принимает данные количество, вес пользователя в кг, рост в м, длительностью активности.
+// Возвращает количество сожженных калорий и ошибку, если она возникает.
 func RunningSpentCalories(steps int, weight, height float64, duration time.Duration) (float64, error) {
-	// TODO: реализовать функцию
+	if weight <= 0 {
+		return 0, errors.New("invalid weight value")
+	}
+	if height <= 0 {
+		return 0, errors.New("invalid height value")
+	}
+	if steps <= 0 {
+		return 0, errors.New("invalid step count")
+	}
+	if duration <= 0 {
+		return 0, errors.New("invalid duration")
+	}
+	return (weight * MeanSpeed(steps, height, duration) * duration.Minutes()) / minInH, nil
 }
 
+// MeanSpeed вычисляет среднюю скорость.
+// Принимает количество шагов, рост пользователя в метрах, продолжительность активности.
+// Возвращает среднюю скорость в километрах/час.
 func MeanSpeed(steps int, height float64, duration time.Duration) float64 {
-	// TODO: реализовать функцию
+	if duration <= 0 {
+		return 0
+	}
+	return Distance(steps, height) / duration.Hours()
 }
 
+// Distance вычисляет пройденную дистанцию.
+// Принимает количество шагов, рост пользователя в метрах.
+// Возвращает дистанцию в километрах.
 func Distance(steps int, height float64) float64 {
-	// TODO: реализовать функцию
+	stepLength := float64(height) * stepLengthCoefficient
+	return float64(steps) * stepLength / mInKm
 }
